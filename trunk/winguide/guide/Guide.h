@@ -20,6 +20,7 @@
 #endif
 
 #include "resource.h"
+#include "CommandManager.h"
 
 
 // -- Preferences -------------------------------------------------------------
@@ -192,8 +193,19 @@ public:
 	TreeDecoration GetTreeDecoration();
 	void SetTreeDecoration(TreeDecoration dec);
 
+	//Keyboard configuration prefs
+	void SetSchemeNames(CStringArray schemes);
+	bool GetSchemeNames(CStringArray & schemeNames);
+	void SetKeyConfig(LPCTSTR scheme, LPCTSTR context, LPCTSTR cmdName, LPCTSTR keyCombo);
+	bool GetKeyConfig(LPCTSTR scheme, LPCTSTR context, LPCTSTR cmdName, CString &keyCombo);
+
+
 	// -- resource strings --
 	CString GetString(UINT id);
+
+	// -- Command manager --
+	CommandManager* GetCommandManager();
+	void LoadDefaultKeyBindings();
 
 private:
 	void PrefHelp_GetColor(LPCTSTR key,
@@ -211,6 +223,7 @@ private:
 	void InitPortableMode();
 	void _SetMFCPortableMode();
 	void CopyFromRegistryOrIni(bool fromRegistry);
+	BOOL ProcessMessageFilter(int code, LPMSG lpMsg);
 
 private:
 	HWND hLeftWnd;
@@ -225,6 +238,8 @@ private:
 	// cache of resource strings
 	CMap<UINT, UINT, CString, LPCTSTR> m_rcStrings;
 
+	CommandManager	_cmdManager;
+	DWORD			_cmdContextCookie;
 // Overrides
 public:
 	virtual BOOL InitInstance();

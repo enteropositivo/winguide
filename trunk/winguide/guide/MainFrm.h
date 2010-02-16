@@ -56,6 +56,7 @@ public:
 	afx_msg void OnPopupExit();
 	afx_msg LRESULT OnGuideUI(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnViewPreferences();
+	afx_msg void OnViewKeyConfiguration();
 	afx_msg void OnTreeSearch();
 	afx_msg void OnUpdateChildCountIndicator(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateLCIndicator(CCmdUI* pCmdUI);

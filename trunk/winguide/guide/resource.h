@@ -3,12 +3,14 @@
 // Used by Guide.rc
 //
 #define IDR_CNTR_INPLACE                6
+#define IDR_CNTR_INPLACE_XX             6
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define ID_TREE_DELETESELECTED          101
 #define IDP_FAILED_TO_CREATE            102
 #define ID_TREE_INSERT                  102
 #define IDR_MAINFRAME                   128
+#define IDR_MAINFRAME_XX                128
 #define IDR_GuideTYPE                   129
 #define IDC_FONTNAME                    129
 #define IDB_BOOK                        129
@@ -24,6 +26,7 @@
 #define IDI_TRAYICON                    141
 #define IDR_TRAYMENU                    142
 #define IDR_TREE_ACCEL                  143
+#define IDR_TREE_ACCEL_XX               143
 #define IDD_HELP_KEYBOARD               144
 #define IDR_NUMBER_MENU                 145
 #define IDR_LINESPACING                 146
@@ -52,6 +55,7 @@
 #define IDB_ICONS                       211
 #define IDB_NODE40                      212
 #define IDB_STATE_ICONS                 215
+#define IDD_KEY_CONFIG                  217
 #define IDC_LIST1                       1000
 #define IDC_LIST2                       1001
 #define IDC_RADIO_TREE_FONT_SYSDEFAULT  1001
@@ -152,6 +156,14 @@
 #define IDC_INI2RGY                     1092
 #define IDC_CHECK_ICONS                 1093
 #define IDC_CHECK_CBOXES                1094
+#define IDC_EDIT_CURRENT_KEY            1095
+#define IDC_EDIT_DESIRED_KEY            1096
+#define IDC_EDIT_CURRENT_COMMAND        1097
+#define IDC_BTN_ASSIGN                  1098
+#define IDC_COMBO_SCHEME                1101
+#define IDC_COMBO_CONTEXT               1102
+#define IDC_EDIT_FILTER                 1103
+#define IDD_PRINT                       1538
 #define IDD_PREF_DATEFMT                1539
 #define IDD_TIMEFMT                     1540
 #define IDD_PREF_FONTANDCOL             1541
@@ -353,6 +365,7 @@
 #define ID_TREE_COLOR                   32965
 #define ID_TREE_BGCOLOR                 32966
 #define ID_TREE_NODEICON                32967
+#define ID_VIEW_KEYCONFIGURATION        32968
 #define ID_INDICATOR_CHILDCOUNT         59142
 #define ID_INDICATOR_LC                 59143
 #define ID_VIEW_FORMATBAR               59396
@@ -361,9 +374,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        216
-#define _APS_NEXT_COMMAND_VALUE         32968
-#define _APS_NEXT_CONTROL_VALUE         1095
+#define _APS_NEXT_RESOURCE_VALUE        218
+#define _APS_NEXT_COMMAND_VALUE         32969
+#define _APS_NEXT_CONTROL_VALUE         1104
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

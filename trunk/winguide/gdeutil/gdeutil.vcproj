@@ -4,6 +4,10 @@
 	Version="9.00"
 	Name="gdeutil"
 	ProjectGUID="{AB20D305-F3AC-4CAE-AABC-C692FED467E7}"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>

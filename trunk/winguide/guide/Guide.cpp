@@ -1,17 +1,17 @@
 /* Copyright 2005-08 Mahadevan R
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 
 #include "stdafx.h"
 #include "MainFrm.h"
@@ -26,8 +26,10 @@
 #define RGY_ROOT_FULL		_T("Software\\") RGY_ROOT _T("\\") RGY_APPNAME
 
 // registry section names
-#define	RGY_SECTION			_T("Settings")
-#define	RGY_SECTION_TEMPL	_T("Templates")
+#define	RGY_SECTION						_T("Settings")
+#define	RGY_SECTION_KEYCONFIG			_T("KeyConfig")
+#define	RGY_SECTION_TEMPL				_T("Templates")
+
 // registry key/value names
 // minimize to tray
 #define RGY_MIN_TO_TRAY		_T("MinimizeToTray")
@@ -68,12 +70,19 @@
 #define RGY_AUTO_BACKUP		_T("AutoBackup")
 // tree decoration
 #define RGY_TREE_DECO		_T("TreeDeco")
+// Key Schemes
+#define RGY_KEY_SCHEMES		_T("KeySchemes")
 
 // default template name
 #define RGY_DEFAULT_TEMPL	_T("__default__")
 
+
+
+
 // name of ini file
 #define GUIDE_INI			_T("guide.ini")
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -82,7 +91,7 @@
 // -- helper methods ----------------------------------------------------------
 
 static void splitString(const CString& str,
-	CStringArray& parts, TCHAR sep = _T('|'))
+						CStringArray& parts, TCHAR sep = _T('|'))
 {
 	int pos, ofs = 0;
 	while ((pos = str.Find(sep, ofs)) > 0)
@@ -210,10 +219,10 @@ static bool isFontAvailable(LPCTSTR faceName)
 // -- HeadingStyle ------------------------------------------------------------
 
 HeadingStyle::HeadingStyle()
-	: fontPointSize(120)
-	, fontBold(false), fontItalic(false), fontUnderline(false)
-	, fontColor(RGB(0,0,0)), breakPage(false), numbered(true)
-	, justify(JFY_LEFT)
+: fontPointSize(120)
+, fontBold(false), fontItalic(false), fontUnderline(false)
+, fontColor(RGB(0,0,0)), breakPage(false), numbered(true)
+, justify(JFY_LEFT)
 {
 	wcscpy(fontFamily, L"Arial");
 }
@@ -231,7 +240,7 @@ PrintTemplate::PrintTemplate()
 
 	wcscpy(headings[0].fontFamily, fontFamily);
 	headings[0].fontPointSize = 26;
-//	headings[0].fontUnderline = true;
+	//	headings[0].fontUnderline = true;
 	headings[0].numbered = false;
 	headings[0].fontColor = RGB(23,54,93);
 	headings[0].breakPage = true;
@@ -300,11 +309,11 @@ void CHeadingStatic::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 	pDC->SetTextColor(RGB(79, 129, 189));
 
-	CSize s = pDC->GetTextExtent(L"The  Guide");
+	CSize s = pDC->GetTextExtent(L"WinGuide");
 	CRect r(lpDrawItemStruct->rcItem);
 	int remainX = r.Width()-s.cy;
 	int remainY = r.Height()-s.cx;
-	pDC->TextOut(remainX/2, r.bottom-remainY/2, L"The Guide");
+	pDC->TextOut(remainX/2, r.bottom-remainY/2, L"Win Guide");
 
 	pDC->SelectObject(pOldFont);
 }
@@ -380,7 +389,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_ABT_HEADING, m_heading);
 	DDX_Control(pDX, IDC_ABT_URL, m_link);
-	DDX_Control(pDX, IDC_ABT_EMAIL, m_email);
 	DDX_Control(pDX, IDC_ABT_GUG, m_gug);
 }
 
@@ -398,10 +406,11 @@ BEGIN_MESSAGE_MAP(CGuideApp, CWinApp)
 END_MESSAGE_MAP()
 
 CGuideApp::CGuideApp()
-	: hLeftWnd(0), hRightWnd(0)
-	, hMainWnd(0), pLeftView(0)
-	, pRightView(0), pFormatBar(0)
-	, m_bPortable(false)
+: hLeftWnd(0), hRightWnd(0)
+, hMainWnd(0), pLeftView(0)
+, pRightView(0), pFormatBar(0)
+, m_bPortable(false)
+, _cmdContextCookie(-1)
 {
 	// empty
 }
@@ -473,7 +482,53 @@ BOOL CGuideApp::InitInstance()
 	if (__argc == 1 && opt == SO_LAST_FILE)
 		OnOpenRecentFile(ID_FILE_MRU_FILE1);
 
+	_cmdContextCookie = _cmdManager.AddContext(_T("Global"));
+
+	LoadDefaultKeyBindings();
+
 	return TRUE;
+}
+
+void CGuideApp::LoadDefaultKeyBindings()
+{
+	//TODO: Uncomment and fix
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cancel"), ID_CANCEL_EDIT_CNTR, VK_ESCAPE, false, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, _T('C'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, VK_INSERT, true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, VK_DELETE, false, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, _T('X'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Find"), ID_EDIT_FIND, _T('F'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertDate"), ID_EDIT_INSERTDATE, _T('D'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertTime"), ID_EDIT_INSERTTIME, _T('T'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, _T('V'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, VK_INSERT, false, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.PasteAsText"), ID_EDIT_PASTEASTEXT, _T('V'), true, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Repeat"), ID_EDIT_REPEAT, VK_F3, false, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Replace"), ID_EDIT_REPLACE, _T('H'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.SelectAll"), ID_EDIT_SELECT_ALL, _T('A'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, VK_BACK, false, false, true);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, _T('Z'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.New"), ID_FILE_NEW, _T('N'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Open"), ID_FILE_OPEN, _T('O'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Print"), ID_FILE_PRINT, _T('P'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.PrintSubtree"), ID_FILE_PRINTSUBTREE, _T('P'), true, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Save"), ID_FILE_SAVE, _T('S'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Bold"), ID_FORMAT_BOLD, _T('B'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.DecreaseIndentation"), ID_FORMAT_DECINDENT, _T('M'), true, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Hyperlink"), ID_FORMAT_HYPERLINK, _T('H'), true, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.IncreaseIndentation"), ID_FORMAT_INCINDENT, _T('M'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Italic"), ID_FORMAT_ITALIC, _T('I'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.LeftJustified"), ID_FORMAT_LEFTJUSTIFIED, _T('L'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.RightJustified"), ID_FORMAT_RIGHTJUSTIFIED, _T('R'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.StrikeThrough"), ID_FORMAT_STRIKETHROUGH, _T('K'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Underline"), ID_FORMAT_UNDERLINE, _T('U'), true, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Next"), ID_NEXT_PANE, VK_F6, false, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.EditProperties"), ID_OLE_EDIT_PROPERTIES, VK_RETURN, false, false, true);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Previous"), ID_PREV_PANE, VK_F6, false, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.RenamePage"), ID_TREE_RENAMEPAGE, VK_F2, false, false, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.Search"), ID_TREE_SEARCH, _T('F'), true, true, false);
+	_cmdManager.SetAccelerator(_cmdContextCookie, _T("View.Preferences"), ID_VIEW_PREFERENCES, VK_OEM_COMMA, true, false, false);
+
 }
 
 void CGuideApp::OnAppAbout()
@@ -528,9 +583,59 @@ void CGuideApp::OnHelpKeyboardshortcuts()
 }
 
 // -- preferences --
+void CGuideApp::SetSchemeNames(CStringArray schemes)
+{
+	if(schemes.GetCount() <= 0)
+		return;
+
+	CString val;
+
+	val.Append(schemes.GetAt(0));
+
+	for(int i=1; i< schemes.GetCount(); i++)
+		val.AppendFormat(_T("|%s"), schemes.GetAt(i));
+
+	WriteProfileStringEx(RGY_SECTION_KEYCONFIG, RGY_KEY_SCHEMES, val);
+}
+
+bool  CGuideApp::GetSchemeNames(CStringArray & schemeNames)
+{
+	CString val = GetProfileStringEx(RGY_SECTION_KEYCONFIG, RGY_KEY_SCHEMES, L"");
+
+	if (val == L"")
+		return false;
+
+	CStringArray parts;
+	splitString(val, parts);
+
+	return true;
+}
+
+void CGuideApp::SetKeyConfig(LPCTSTR scheme, LPCTSTR context, LPCTSTR cmdName, LPCTSTR keyCombo)
+{
+	CString profileKey;
+	profileKey.Format(_T("%s|%s|%s"), scheme, context, cmdName);
+
+	WriteProfileStringEx(RGY_SECTION_KEYCONFIG, profileKey, keyCombo);
+}
+
+bool  CGuideApp::GetKeyConfig(LPCTSTR scheme, LPCTSTR context, LPCTSTR cmdName, CString &keyCombo)
+{
+	CString profileKey;
+	profileKey.Format(_T("%s|%s|%s"), scheme, context, cmdName);
+
+	CString val = GetProfileStringEx(RGY_SECTION_KEYCONFIG, profileKey, L"");
+
+	if (val == L"")
+		return false;
+
+	keyCombo = val;
+
+	return true;
+}
 
 void CGuideApp::PrefHelp_GetColor(LPCTSTR key,
-	bool& sysDefault, COLORREF& foreColor, COLORREF& backColor)
+								  bool& sysDefault, COLORREF& foreColor, COLORREF& backColor)
 {
 	sysDefault = true;
 	foreColor = RGB(0,0,0);
@@ -551,7 +656,7 @@ void CGuideApp::PrefHelp_GetColor(LPCTSTR key,
 }
 
 void CGuideApp::PrefHelp_SetColor(LPCTSTR key, 
-	bool sysDefault, COLORREF foreColor, COLORREF backColor)
+								  bool sysDefault, COLORREF foreColor, COLORREF backColor)
 {
 	CString val;
 	val.Format(_T("%d|%u|%u"), sysDefault, foreColor, backColor);
@@ -559,8 +664,8 @@ void CGuideApp::PrefHelp_SetColor(LPCTSTR key,
 }
 
 static bool splitFontString(const CString& str0,
-	bool& sysDefault, CString& fontName, int& height, bool& bold,
-	bool& italic)
+							bool& sysDefault, CString& fontName, int& height, bool& bold,
+							bool& italic)
 {
 	CStringArray parts;
 	splitString(str0, parts);
@@ -594,8 +699,8 @@ static bool splitFontString(const CString& str0,
 }
 
 static CString makeFontString(
-	bool sysDefault, const CString& fontName,
-	int height, bool bold, bool italic)
+							  bool sysDefault, const CString& fontName,
+							  int height, bool bold, bool italic)
 {
 	CString s;
 	s.Format(_T("%d|%s|%d|%d|%d"), sysDefault, fontName, height, bold, italic);
@@ -603,7 +708,7 @@ static CString makeFontString(
 }
 
 void CGuideApp::PrefHelp_GetFont(LPCTSTR key, 
-	bool& sysDefault, PreferredFont& font)
+								 bool& sysDefault, PreferredFont& font)
 {
 	sysDefault = true;
 	font = theDefaultFont;
@@ -621,15 +726,15 @@ void CGuideApp::PrefHelp_GetFont(LPCTSTR key,
 }
 
 void CGuideApp::PrefHelp_SetFont(LPCTSTR key, bool sysDefault,
-	const PreferredFont& font)
+								 const PreferredFont& font)
 {
 	WriteProfileStringEx(RGY_SECTION, key, 
 		makeFontString(sysDefault, font.faceName, font.height, 
-			font.bold, font.italic));
+		font.bold, font.italic));
 }
 
 void CGuideApp::GetTreeColor(bool& sysDefault, COLORREF& foreColor,
-	COLORREF& backColor)
+							 COLORREF& backColor)
 {
 	PrefHelp_GetColor(RGY_TREE_COLOR, sysDefault, foreColor, backColor);
 }
@@ -640,7 +745,7 @@ void CGuideApp::SetTreeColor(bool sysDefault, COLORREF foreColor, COLORREF backC
 }
 
 void CGuideApp::GetTextColor(bool& sysDefault, COLORREF& foreColor, 
-	COLORREF& backColor)
+							 COLORREF& backColor)
 {
 	PrefHelp_GetColor(RGY_TEXT_COLOR, sysDefault, foreColor, backColor);
 }
@@ -687,7 +792,7 @@ void CGuideApp::SetStartupOption(StartupOption opt)
 void CGuideApp::SetPrintTemplate(const PrintTemplate& templ, LPCTSTR which)
 {
 	LPCTSTR which2 = which ? which : RGY_DEFAULT_TEMPL;
-	
+
 	CString value;
 	if (toString(templ, value))
 		WriteProfileStringEx(RGY_SECTION_TEMPL, which2, value);
@@ -753,9 +858,9 @@ void CGuideApp::SetPaneWidths(int treePaneWidth, int textPaneWidth)
 
 static const CustomColors _defaultCustomColor = { {
 	0xffffff, 0xffffff, 0xffffff, 0xffffff,
-	0xffffff, 0xffffff, 0xffffff, 0xffffff,
-	0xffffff, 0xffffff, 0xffffff, 0xffffff,
-	0xffffff, 0xffffff, 0xffffff, 0xffffff,
+		0xffffff, 0xffffff, 0xffffff, 0xffffff,
+		0xffffff, 0xffffff, 0xffffff, 0xffffff,
+		0xffffff, 0xffffff, 0xffffff, 0xffffff,
 } };
 
 void CGuideApp::GetCustomColors(CustomColors& colors)
@@ -1267,7 +1372,7 @@ void CGuideApp::CopyFromRegistry()
 {
 	HKEY hKey = NULL;
 	if (RegOpenKeyEx(HKEY_CURRENT_USER, RGY_ROOT_FULL, 0,
-			KEY_ENUMERATE_SUB_KEYS|KEY_READ|KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS)
+		KEY_ENUMERATE_SUB_KEYS|KEY_READ|KEY_QUERY_VALUE, &hKey) != ERROR_SUCCESS)
 		return;
 
 	DWORD nIndex = 0;
@@ -1282,7 +1387,7 @@ void CGuideApp::CopyFromRegistry()
 		CString subKey = RGY_ROOT_FULL; subKey += _T('\\'); subKey += keyName;
 		HKEY hSubKey = NULL;
 		if (RegOpenKeyEx(HKEY_CURRENT_USER, subKey, 0, 
-				KEY_ENUMERATE_SUB_KEYS|KEY_READ|KEY_QUERY_VALUE, &hSubKey) == ERROR_SUCCESS)
+			KEY_ENUMERATE_SUB_KEYS|KEY_READ|KEY_QUERY_VALUE, &hSubKey) == ERROR_SUCCESS)
 		{
 			DWORD nSubIndex = 0;
 			while (1)
@@ -1293,7 +1398,7 @@ void CGuideApp::CopyFromRegistry()
 				unsigned char valueValue[20480 + 1] = {0}; // need 0-fill
 				DWORD valueValueLen = sizeof(valueValue);
 				if (RegEnumValue(hSubKey, nSubIndex, valueName, &valueNameLen, NULL, &valueType,
-						valueValue, &valueValueLen) != ERROR_SUCCESS)
+					valueValue, &valueValueLen) != ERROR_SUCCESS)
 					break;
 
 				if (valueType == REG_SZ)
@@ -1414,4 +1519,22 @@ CString CGuideApp::GetString(UINT id)
 	}
 
 	return val;
+}
+
+BOOL CGuideApp::ProcessMessageFilter(int code, LPMSG lpMsg)
+{
+	HACCEL hAccel =  _cmdManager.GetDynamicAcceleratorTable(_cmdContextCookie);
+
+	if(hAccel && m_pMainWnd)
+	{
+		if (::TranslateAccelerator(m_pMainWnd->m_hWnd, hAccel, lpMsg)) 
+			return TRUE;
+	}
+
+	return CWinApp::ProcessMessageFilter(code, lpMsg);
+}
+
+CommandManager* CGuideApp::GetCommandManager()
+{
+	return &_cmdManager;
 }

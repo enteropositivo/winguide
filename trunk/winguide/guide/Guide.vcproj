@@ -5,6 +5,10 @@
 	Name="Guide"
 	ProjectGUID="{53B76919-4361-4D8D-825C-36F5192E71FB}"
 	RootNamespace="Guide"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="MFCProj"
 	TargetFrameworkVersion="131072"
 	>
@@ -46,7 +50,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../libguide/include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -130,7 +134,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../libguide/include"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NON_CONFORMING_SWPRINTFS"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
 				TreatWChar_tAsBuiltInType="true"
@@ -155,7 +159,6 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				GenerateMapFile="true"
 				SubSystem="2"
 				LargeAddressAware="2"
 				OptimizeReferences="2"
@@ -201,6 +204,10 @@
 			</File>
 			<File
 				RelativePath=".\ColoredStatic.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CommandManager.cpp"
 				>
 			</File>
 			<File
@@ -253,6 +260,18 @@
 			</File>
 			<File
 				RelativePath=".\KeyboardHelp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyComboEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyConfig.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyConverter.cpp"
 				>
 			</File>
 			<File
@@ -346,6 +365,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\CommandManager.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DateTimePref.h"
 				>
 			</File>
@@ -407,6 +430,18 @@
 			</File>
 			<File
 				RelativePath=".\KeyboardHelp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyComboEdit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\KeyConverter.h"
 				>
 			</File>
 			<File

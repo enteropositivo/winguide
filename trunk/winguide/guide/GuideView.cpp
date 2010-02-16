@@ -221,8 +221,7 @@ BOOL CGuideView::OnPreparePrinting(CPrintInfo* pInfo)
 	// Change the PRINTDLG struct so that the custom print dialog box will
 	// be used.
 	pInfo->m_pPD->m_pd.hInstance = AfxGetInstanceHandle();
-	pInfo->m_pPD->m_pd.lpPrintTemplateName =
-										MAKEINTRESOURCE(1538);
+	pInfo->m_pPD->m_pd.lpPrintTemplateName = MAKEINTRESOURCE(IDD_PRINT);
 
 	// Set the Flags of the PRINTDLG structure as shown, else the
 	// changes will have no effect.
