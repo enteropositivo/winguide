@@ -24,6 +24,7 @@ DWORD CommandManager::AddContext(CString ctx)
 	{
 		_accelMap.push_back(AccelMap());
 		_changeMap.push_back(TRUE);
+		_hAccelMap.push_back(NULL);
 		_cookieMap[ctx] = (DWORD)_accelMap.size()-1;//Save the index of the entry just inserted as the cookie
 	}
 
@@ -77,13 +78,13 @@ HACCEL CommandManager::GetDynamicAcceleratorTable(DWORD contextCookie)
 		}
 		
 		if(accelArray.size() > 0)
-			_hAccel = CreateAcceleratorTable(&accelArray[0]
+			_hAccelMap[contextCookie] = CreateAcceleratorTable(&accelArray[0]
 												, (int)accelArray.size());
 		
 		_changeMap[contextCookie] = false;
 	}
 
-	return _hAccel;
+	return _hAccelMap[contextCookie];
 }
 
 bool CommandManager::GetFirstCommandName(DWORD contextCookie, CString &cmdName)
