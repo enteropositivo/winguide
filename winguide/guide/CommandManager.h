@@ -15,13 +15,14 @@ public:
 	typedef std::map<CString, ACCEL> AccelMap;//CommandName->ACCEL
 	typedef std::vector<AccelMap> ContextMap;//ContextCookie->ACCELMAP
 	typedef std::vector<bool> ChangeMap;//ContextCookie->changed?
+	typedef std::vector<HACCEL> HAccelMap;//ContextCookie->changed?
 	typedef std::map<CString,DWORD> ContextNameToCookieMap;//ContextName->Cookie
 
 private:
 	ContextMap				_accelMap;
 	ChangeMap				_changeMap;
 	ContextNameToCookieMap	_cookieMap; 
-	HACCEL		_hAccel;
+	HAccelMap		_hAccelMap;
 	CGuideApp	*_app;
 
 	CString			_currentScheme;
