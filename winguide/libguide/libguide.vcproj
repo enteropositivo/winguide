@@ -5,6 +5,10 @@
 	Name="libguide"
 	ProjectGUID="{0511F7B7-4962-48D9-BD76-97D3ABEC592A}"
 	RootNamespace="libguide"
+	SccProjectName="Svn"
+	SccAuxPath="Svn"
+	SccLocalPath="Svn"
+	SccProvider="SubversionScc"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -95,7 +99,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetDir)\*.dll&quot; &quot;..\guide\$(ConfigurationName)&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)\*.pdb&quot; &quot;..\guide\$(ConfigurationName)&quot;"
+				CommandLine="copy &quot;$(TargetDir)*.dll&quot; &quot;..\Guide\$(ConfigurationName)&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)*.pdb&quot; &quot;..\Guide\$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -174,7 +178,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy &quot;$(TargetDir)\*.dll&quot; &quot;..\guide\$(ConfigurationName)&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)\*.pdb&quot; &quot;..\guide\$(ConfigurationName)&quot;"
+				CommandLine="copy &quot;$(TargetDir)*.dll&quot; &quot;..\Guide\$(ConfigurationName)&quot;&#x0D;&#x0A;copy &quot;$(TargetDir)*.pdb&quot; &quot;..\Guide\$(ConfigurationName)&quot;"
 			/>
 		</Configuration>
 	</Configurations>

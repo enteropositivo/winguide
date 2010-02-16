@@ -20,6 +20,9 @@
 #include "FormatBarDefs.h"
 #include "PrefSheet.h"
 #include ".\mainfrm.h"
+#include "KeyConfig.h"
+
+//#include "Imm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,6 +41,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_TRAY_RESTORE, OnPopupRestore)
 	ON_COMMAND(ID_TRAY_EXIT, OnPopupExit)
 	ON_COMMAND(ID_VIEW_PREFERENCES, OnViewPreferences)
+	ON_COMMAND(ID_VIEW_KEYCONFIGURATION, OnViewKeyConfiguration)
 	ON_COMMAND(ID_TREE_SEARCH, OnTreeSearch)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_CHILDCOUNT, OnUpdateChildCountIndicator)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_LC, OnUpdateLCIndicator)
@@ -147,9 +151,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// v1.4: Restore control bar states
 	LoadBarState(barStateSection);
 
-	if(!RegisterHotKey(GetSafeHwnd(), HOTKEY_ID, MOD_CONTROL, VK_F11))
+	//m_hWnd
+	if(!RegisterHotKey(GetSafeHwnd(), HOTKEY_ID, MOD_CONTROL , VK_F11))
 	{
-		MessageBox(_T("Could not register hotkey (Ctrl + F11)"), _T("Error"), NULL);
+		MessageBox(_T("Failed to register global hotkey (Ctrl + F11)"), _T("Error"), NULL);
 	}
 
 	return 0;
@@ -240,12 +245,6 @@ void CMainFrame::OnSysCommand(UINT nID, LPARAM lParam)
 	CFrameWnd::OnSysCommand(nID, lParam);
 }
 
-LRESULT CMainFrame::OnHotkeyMsg(WPARAM wParam, LPARAM lParam)
-{
-	OnPopupRestore();
-	return 0;
-}
-
 LRESULT CMainFrame::OnTrayIconMsg(WPARAM wParam, LPARAM lParam)
 {
 	if (lParam == WM_RBUTTONUP)
@@ -269,6 +268,12 @@ LRESULT CMainFrame::OnTrayIconMsg(WPARAM wParam, LPARAM lParam)
 		OnPopupRestore();
 	}
 
+	return 0;
+}
+
+afx_msg LRESULT CMainFrame::OnHotkeyMsg(WPARAM wParam, LPARAM lParam)
+{
+	OnPopupRestore();
 	return 0;
 }
 
@@ -307,6 +312,12 @@ void CMainFrame::OnViewPreferences()
 {
 	CPrefSheet aPrefSheet(RCSTR(IDS_PREFDLG_NAME));
 	aPrefSheet.DoModal();
+}
+
+void CMainFrame::OnViewKeyConfiguration()
+{
+	KeyConfig keyConfig;
+	keyConfig.DoModal();
 }
 
 void CMainFrame::SetStatusBarText(LPCTSTR text)

@@ -51,7 +51,7 @@ CStringA TemplateHelper::GetHeading(const char *headingNumber, int headingLevel,
 
 	// get font size in twips
 	char fontTwips[32];
-	itoa(hs.fontPointSize * 2, fontTwips, 10);
+	_itoa(hs.fontPointSize * 2, fontTwips, 10);
 
 	// NOTE: the order of the following steps is important!
 
@@ -225,7 +225,7 @@ CStringA HeadingCounter::GetHeadingNumber(struct tree_node_t *node)
 	MapValue value;
 	while (m_Map.Lookup(node, value))
 	{
-		result.Insert(0, itoa(value.m_nSelfNumber, tmp, 10));
+		result.Insert(0, _itoa(value.m_nSelfNumber, tmp, 10));
 		result.Insert(0, ".");
 
 		node = tree_get_parent(node);
