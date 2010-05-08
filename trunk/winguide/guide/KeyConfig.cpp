@@ -18,22 +18,22 @@
 #include "KeyConfig.h"
 
 
-// KeyConfig dialog
+// KeyConfigDialog dialog
 
-IMPLEMENT_DYNAMIC(KeyConfig, CDialog)
+IMPLEMENT_DYNAMIC(KeyConfigDialog, CDialog)
 
-KeyConfig::KeyConfig(CWnd* pParent /*=NULL*/)
-	: CDialog(KeyConfig::IDD, pParent)
+KeyConfigDialog::KeyConfigDialog(CWnd* pParent /*=NULL*/)
+	: CDialog(KeyConfigDialog::IDD, pParent)
 	, _ctxCookie(-1)
 {
 
 }
 
-KeyConfig::~KeyConfig()
+KeyConfigDialog::~KeyConfigDialog()
 {
 }
 
-void KeyConfig::DoDataExchange(CDataExchange* pDX)
+void KeyConfigDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, m_availableCommands);
@@ -43,11 +43,11 @@ void KeyConfig::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CONTEXT, m_cmbContext);
 }
 
-BOOL KeyConfig::OnInitDialog()
+BOOL KeyConfigDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	_cmdManager = ((CGuideApp*)AfxGetApp())->GetCommandManager();
+	_cmdManager = CommandManager::GetInstance();
 
 	CStringArray contextNames;
 
@@ -66,40 +66,52 @@ BOOL KeyConfig::OnInitDialog()
 }
 
 
-BEGIN_MESSAGE_MAP(KeyConfig, CDialog)
-	ON_LBN_SELCHANGE(IDC_LIST1, &KeyConfig::OnLbnSelchangeList1)
-	ON_BN_CLICKED(IDOK, &KeyConfig::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_BTN_ASSIGN, &KeyConfig::OnBnClickedBtnAssign)
-	ON_CBN_SELCHANGE(IDC_COMBO_CONTEXT, &KeyConfig::OnCbnSelchangeComboContext)
+BEGIN_MESSAGE_MAP(KeyConfigDialog, CDialog)
+	ON_LBN_SELCHANGE(IDC_LIST1, &KeyConfigDialog::OnLbnSelchangeList1)
+	ON_BN_CLICKED(IDOK, &KeyConfigDialog::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_BTN_ASSIGN, &KeyConfigDialog::OnBnClickedBtnAssign)
+	ON_CBN_SELCHANGE(IDC_COMBO_CONTEXT, &KeyConfigDialog::OnCbnSelchangeComboContext)
 END_MESSAGE_MAP()
 
 
-// KeyConfig message handlers
+// KeyConfigDialog message handlers
 
-void KeyConfig::OnLbnSelchangeList1()
+void KeyConfigDialog::OnLbnSelchangeList1()
 {
 	int index = m_availableCommands.GetCurSel();
-	CString text;
-	m_availableCommands.GetText(index, text);
-	m_txtCurrentKeyAssignment.SetWindowText(_cmdManager->GetCommandKeyCombo(_ctxCookie, text));
+	if(index >=0 )
+	{
+		CString text;
+		m_availableCommands.GetText(index, text);
+		m_txtCurrentKeyAssignment.SetWindowText(_cmdManager->GetCommandKeyCombo(_ctxCookie, text));
+	}
 }
 
 
-void KeyConfig::OnBnClickedOk()
+void KeyConfigDialog::OnBnClickedOk()
 {
 	// TODO: Add your control notification handler code here
 	OnOK();
 }
 
-void KeyConfig::OnBnClickedBtnAssign()
+void KeyConfigDialog::OnBnClickedBtnAssign()
 {
 	int index = m_availableCommands.GetCurSel();
 	CString text;
 	m_availableCommands.GetText(index, text);
-	//_cmdManager->SetAccelerator(text, 
+	if(m_txtDesiredKeyCombo.IsValidKeyCombo())
+		_cmdManager->ResetAccelerator(_ctxCookie
+										, text
+										, m_txtDesiredKeyCombo.GetVirtualKeyCode()
+										, m_txtDesiredKeyCombo.WasCtrlPressed()
+										, m_txtDesiredKeyCombo.WasShiftPressed()
+										, m_txtDesiredKeyCombo.WasAltPressed()
+									);
+
+	OnLbnSelchangeList1();
 }
 
-void KeyConfig::OnCbnSelchangeComboContext()
+void KeyConfigDialog::OnCbnSelchangeComboContext()
 {
 	int index = m_cmbContext.GetCurSel();
 	CString contextName;

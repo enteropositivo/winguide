@@ -19,6 +19,7 @@
 #include "FgColorDialog.h"
 #include "iconwnd.h"
 #include ".\leftview.h"
+#include "logger.h"
 
 #include "utils.h"
 
@@ -342,7 +343,7 @@ BOOL CLeftView::OnPreparePrinting(CPrintInfo* pInfo)
 
 static HIMAGELIST GetStateImageList()
 {
-	static HIMAGELIST himl;
+	static HIMAGELIST himl; 
 	if (himl)
 		return himl;
 
@@ -1276,8 +1277,13 @@ void CLeftView::OnTimer(UINT nIDEvent)
 
 BOOL CLeftView::PreTranslateMessage(MSG* pMsg)
 {
+	Logger::Enter(_T("CLeftView::PreTranslateMessage\n"));
 	WPARAM wParam = pMsg->wParam;
 	CEdit *pEdit = GetTreeCtrl().GetEditControl();
+
+	Logger::Log(*pMsg);
+
+	BOOL retVal = FALSE;
 
 	// treat edit control message separately
 	if (pEdit)
@@ -1285,6 +1291,7 @@ BOOL CLeftView::PreTranslateMessage(MSG* pMsg)
 		// handle these keys: esc, ctrl+x, ctrl+v, ctrl+c
 		if (pMsg->message == WM_KEYDOWN)
 		{
+			TRACE(_T("\tInside Edit control message handler") );
 			// is ctrl pressed?
 			SHORT bCtrl = GetKeyState(VK_CONTROL) & 0x8000;
 
@@ -1295,18 +1302,28 @@ BOOL CLeftView::PreTranslateMessage(MSG* pMsg)
 			case 'X': if (bCtrl) { pEdit->SendMessage(WM_CUT); return TRUE; } break;
 			case 'V': if (bCtrl) { pEdit->SendMessage(WM_PASTE); return TRUE; } break;
 			}
+			TRACE(_T("\tExiting Edit control message handler") );
 		}
 
 		// else just do the default thing
-		return CTreeView::PreTranslateMessage(pMsg);
+		retVal = CTreeView::PreTranslateMessage(pMsg);
 	}
+	else
+	{
+		// if normal message (not while editing), see if these are shortcuts
+		if (TranslateAccelerator(GetSafeHwnd(), m_hAccel, pMsg))
+		{
+			retVal = TRUE;
+		}
+		else
+		{
+			// else just do the default thing
+			retVal = CTreeView::PreTranslateMessage(pMsg);
+		}
+	}
+	Logger::Exit(_T("CLeftView::PreTranslateMessage\n"));
 
-	// if normal message (not while editing), see if these are shortcuts
-	if (TranslateAccelerator(GetSafeHwnd(), m_hAccel, pMsg))
-		return TRUE;
-
-	// else just do the default thing
-	return CTreeView::PreTranslateMessage(pMsg);
+	return retVal;
 }
 
 void CLeftView::OnTreeDelSelected()

@@ -18,6 +18,7 @@ public:
 	bool WasShiftPressed() { return _shiftPressed; }
 	bool WasAltPressed() { return _altPressed; }
 	UINT GetVirtualKeyCode() { return _virtualKeyCode; }
+	bool IsValidKeyCombo() { return _virtualKeyCode != 0xFF; }
 
 	BOOL PreTranslateMessage(MSG *pMsg);
 

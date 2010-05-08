@@ -3,15 +3,15 @@
 #include "CommandManager.h"
 #include "KeyComboEdit.h"
 
-// KeyConfig dialog
+// KeyConfigDialog dialog
 
-class KeyConfig : public CDialog
+class KeyConfigDialog : public CDialog
 {
-	DECLARE_DYNAMIC(KeyConfig)
+	DECLARE_DYNAMIC(KeyConfigDialog)
 
 public:
-	KeyConfig(CWnd* pParent = NULL);   // standard constructor
-	virtual ~KeyConfig();
+	KeyConfigDialog(CWnd* pParent = NULL);   // standard constructor
+	virtual ~KeyConfigDialog();
 
 // Dialog Data
 	enum { IDD = IDD_KEY_CONFIG };

@@ -2,6 +2,9 @@
 #include "CommandManager.h"
 #include ".\guide.h"
 
+//Static member variable
+CommandManager *CommandManager::_instance = NULL;
+
 CommandManager::CommandManager(void)
 {
 	_app = (CGuideApp*)AfxGetApp();
@@ -49,12 +52,37 @@ void CommandManager::SetAccelerator(DWORD ctxCookie
 						, bool shift
 						, bool alt)
 {
+	TRACE(_T("Enter CommandManager::SetAccelerator()\n"));
 	_changeMap[ctxCookie] = true;
 	ACCEL accel;
 	accel.fVirt = getFVirt(key, ctrl, shift, alt);
 	accel.key = key;
 	accel.cmd = cmdId;
 	_accelMap[ctxCookie][cmdName] = accel;
+	TRACE(_T("ACCEL(fVirt=0x%x, key=0x%x, cmd=0x%x)\n"), accel.fVirt, accel.key, accel.cmd);
+	TRACE(_T("Exit CommandManager::SetAccelerator()\n"));
+}
+
+void CommandManager::ResetAccelerator(DWORD ctxCookie
+						, CString cmdName
+						, WORD key
+						, bool ctrl
+						, bool shift
+						, bool alt)
+{
+	TRACE(_T("Enter CommandManager::ResetAccelerator()\n"));
+	AccelMap::iterator cmdIter = _accelMap[ctxCookie].find(cmdName);
+	if(cmdIter == _accelMap[ctxCookie].end())
+		throw std::exception("Trying to reset unregistered command. Use SetAccelerator() first.\n");
+
+	_changeMap[ctxCookie] = true;
+	ACCEL accel;
+	accel.fVirt = getFVirt(key, ctrl, shift, alt);
+	accel.key = key;
+	accel.cmd = cmdIter->second.cmd;
+	_accelMap[ctxCookie][cmdName] = accel;
+	TRACE(_T("ACCEL(fVirt=0x%x, key=0x%x, cmd=0x%x)\n"), accel.fVirt, accel.key, accel.cmd);
+	TRACE(_T("Exit CommandManager::ResetAccelerator()\n"));
 }
 
 DWORD CommandManager::GetContextCookie(CString context)
@@ -64,8 +92,16 @@ DWORD CommandManager::GetContextCookie(CString context)
 
 HACCEL CommandManager::GetDynamicAcceleratorTable(DWORD contextCookie)
 {
+
+	if(contextCookie >= _hAccelMap.size())
+	{
+		TRACE(_T("CommandManager::GetDynamicAcceleratorTable(): Invalid context cookie\n"));
+		return NULL;
+	}
+
 	if(_changeMap[contextCookie])
 	{
+		TRACE(_T("CommandManager::GetDynamicAcceleratorTable(): Creating new context map\n"));
 		std::vector<ACCEL> accelArray;
 		
 		AccelMap & accelMap = _accelMap[contextCookie];
@@ -76,10 +112,13 @@ HACCEL CommandManager::GetDynamicAcceleratorTable(DWORD contextCookie)
 		{
 			accelArray.push_back(i->second);
 		}
+		TRACE(_T("CommandManager::GetDynamicAcceleratorTable(): Found %d accelerators \n"), accelArray.size());
 		
 		if(accelArray.size() > 0)
-			_hAccelMap[contextCookie] = CreateAcceleratorTable(&accelArray[0]
-												, (int)accelArray.size());
+		{
+			DestroyAcceleratorTable(_hAccelMap[contextCookie]);
+			_hAccelMap[contextCookie] = CreateAcceleratorTable(&accelArray[0], (int)accelArray.size());
+		}
 		
 		_changeMap[contextCookie] = false;
 	}
@@ -126,47 +165,6 @@ CString CommandManager::GetCommandKeyCombo(DWORD contextCookie, CString cmdName)
 	return GetCommandKeyCombo(_accelMap[contextCookie][cmdName]);
 }
 
-//void CommandManager::Serialize( CArchive& archive )
-//{
-//	// call base class function first
-//	// base class is CObject in this case
-//	CObject::Serialize( archive );
-
-//	// now do the stuff for our specific class
-//	if(archive.IsStoring())
-//	{
-//		//Save the number of elements
-//		archive << (int)_accelMap.size();
-
-//		for(AccelMap::iterator i = _accelMap.begin();
-//			i != _accelMap.end();
-//			++i)
-//		{
-//			archive << i->first;
-//			archive << i->second.cmd;
-//			archive << i->second.fVirt;
-//			archive << i->second.key;
-//		}
-//	}
-//	else
-//	{
-//		int size;
-//		archive >> size;
-//		CString name;
-//		ACCEL accel;
-//		for(int i=0; i<size; i++)
-//		{
-//			archive >> name;
-//			archive >> accel.cmd;
-//			archive >> accel.fVirt;
-//			archive >> accel.key;
-//		}
-
-//		_accelMap[name] = accel;
-//	}
-//}
-
-
 BYTE CommandManager::getFVirt(WORD key, bool ctrl, bool shift, bool alt)
 {
 	BYTE fVirt=0;
@@ -176,5 +174,13 @@ BYTE CommandManager::getFVirt(WORD key, bool ctrl, bool shift, bool alt)
 	fVirt |= alt?FALT:0;
 
 	return fVirt;
+}
+
+CommandManager * CommandManager::GetInstance()
+{
+	if(_instance == NULL)
+		_instance = new CommandManager();
+
+	return _instance;
 }
 
