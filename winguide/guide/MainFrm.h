@@ -18,6 +18,7 @@
 #include "afxwin.h"
 #include "FormatBar.h"
 #include "searchdlg.h"
+#include "CommandManager.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -34,8 +35,12 @@ private:
 	CSearchDlg	 m_SearchDlg;
 	int			 m_initialOVR;
 
-	BOOL CreateFormatBar();
+	CommandManager*	_cmdManager;
+	DWORD			_cmdContextCookie;
 
+	BOOL CreateFormatBar();
+	BOOL PreTranslateMessage( MSG* pMsg );
+	void LoadDefaultKeyBindings();
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
@@ -61,4 +66,7 @@ public:
 	afx_msg void OnUpdateChildCountIndicator(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateLCIndicator(CCmdUI* pCmdUI);
 	afx_msg void OnUpdateEditInsertdate(CCmdUI *pCmdUI);
+	afx_msg BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+
+	
 };

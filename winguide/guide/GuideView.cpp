@@ -27,8 +27,10 @@
 #include "ExportFileDialog.h"
 #include "HyperLinkDialog.h"
 #include <libguide/wintree.h>
+#include "Logger.h"
 
 #include ".\guideview.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1558,4 +1560,18 @@ void CGuideView::OnEditPasteastext()
 void CGuideView::OnUpdateEditPasteastext(CCmdUI *pCmdUI)
 {
 	pCmdUI->Enable(IsClipboardFormatAvailable(CF_TEXT));
+}
+
+
+BOOL CGuideView::PreTranslateMessage( MSG* pMsg )
+{
+	Logger::Enter(_T("CGuideView::PreTranslateMessage\n"));
+
+	Logger::Log(*pMsg);
+
+	BOOL retVal = CRichEditView::PreTranslateMessage(pMsg);
+
+	Logger::Exit(_T("CGuideView::PreTranslateMessage\n"));
+
+	return retVal;
 }

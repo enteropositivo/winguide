@@ -19,6 +19,9 @@
 #include "LeftView.h"
 #include "KeyboardHelp.h"
 #include ".\guide.h"
+#include "Interspy\InterSpy.h" 
+#include "Win32Error.h"
+#include "logger.h"
 
 // registry root
 #define RGY_ROOT			_T("MD's Stuff")	// uh, it just happened that way.. ;-)
@@ -410,7 +413,6 @@ CGuideApp::CGuideApp()
 , hMainWnd(0), pLeftView(0)
 , pRightView(0), pFormatBar(0)
 , m_bPortable(false)
-, _cmdContextCookie(-1)
 {
 	// empty
 }
@@ -422,6 +424,34 @@ BOOL CGuideApp::InitInstance()
 	InitCommonControls();
 
 	CWinApp::InitInstance();
+
+
+	////Initialize Interspy
+	//CInterSpy::ExcludeMsg(WM_NCHITTEST);
+	//CInterSpy::ExcludeMsg(WM_MOUSEMOVE);
+	//CInterSpy::ExcludeMsg(WM_SETCURSOR);
+
+	//CInterSpy::Initialize(IS_NOKICKIDLE | IS_NODUPLICATES | IS_RESETONSTART | IS_AUTOSTARTOUTPUT );
+
+	//Logger::SetFilterMode(true);
+	//Logger::AddFilter(WM_KEYDOWN);
+	//Logger::AddFilter(WM_KEYUP);
+	//Logger::AddFilter(WM_CHAR);
+	//Logger::AddFilter(WM_SYSKEYDOWN);
+	//Logger::AddFilter(WM_SYSKEYUP);
+	//Logger::AddFilter(WM_SYSCHAR);
+	//Logger::AddFilter(WM_COMMAND);
+	//Logger::AddFilter(WM_SYSCOMMAND);
+	
+	Logger::SetFilterMode(false);
+	//Logger::AddFilter(WM_MOUSEMOVE);
+	//Logger::AddFilter(WM_NCMOUSEMOVE);
+	//Logger::AddFilter(WM_APP + 16450);
+	//Logger::AddFilter(WM_APP + 16451);
+	//Logger::AddFilter(WM_APP + 16446);
+	//Logger::AddFilter(WM_TIMER);
+	//Logger::AddFilter(WM_PAINT);
+	
 
 	// check whether we're to use registry or ini file
 	InitPortableMode();
@@ -482,54 +512,10 @@ BOOL CGuideApp::InitInstance()
 	if (__argc == 1 && opt == SO_LAST_FILE)
 		OnOpenRecentFile(ID_FILE_MRU_FILE1);
 
-	_cmdContextCookie = _cmdManager.AddContext(_T("Global"));
-
-	LoadDefaultKeyBindings();
-
 	return TRUE;
 }
 
-void CGuideApp::LoadDefaultKeyBindings()
-{
-	//TODO: Uncomment and fix
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cancel"), ID_CANCEL_EDIT_CNTR, VK_ESCAPE, false, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, _T('C'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, VK_INSERT, true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, VK_DELETE, false, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, _T('X'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Find"), ID_EDIT_FIND, _T('F'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertDate"), ID_EDIT_INSERTDATE, _T('D'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertTime"), ID_EDIT_INSERTTIME, _T('T'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, _T('V'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, VK_INSERT, false, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.PasteAsText"), ID_EDIT_PASTEASTEXT, _T('V'), true, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Repeat"), ID_EDIT_REPEAT, VK_F3, false, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Replace"), ID_EDIT_REPLACE, _T('H'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.SelectAll"), ID_EDIT_SELECT_ALL, _T('A'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, VK_BACK, false, false, true);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, _T('Z'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.New"), ID_FILE_NEW, _T('N'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Open"), ID_FILE_OPEN, _T('O'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Print"), ID_FILE_PRINT, _T('P'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.PrintSubtree"), ID_FILE_PRINTSUBTREE, _T('P'), true, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Save"), ID_FILE_SAVE, _T('S'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Bold"), ID_FORMAT_BOLD, _T('B'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.DecreaseIndentation"), ID_FORMAT_DECINDENT, _T('M'), true, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Hyperlink"), ID_FORMAT_HYPERLINK, _T('H'), true, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.IncreaseIndentation"), ID_FORMAT_INCINDENT, _T('M'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Italic"), ID_FORMAT_ITALIC, _T('I'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.LeftJustified"), ID_FORMAT_LEFTJUSTIFIED, _T('L'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.RightJustified"), ID_FORMAT_RIGHTJUSTIFIED, _T('R'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.StrikeThrough"), ID_FORMAT_STRIKETHROUGH, _T('K'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Underline"), ID_FORMAT_UNDERLINE, _T('U'), true, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Next"), ID_NEXT_PANE, VK_F6, false, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.EditProperties"), ID_OLE_EDIT_PROPERTIES, VK_RETURN, false, false, true);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Previous"), ID_PREV_PANE, VK_F6, false, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.RenamePage"), ID_TREE_RENAMEPAGE, VK_F2, false, false, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.Search"), ID_TREE_SEARCH, _T('F'), true, true, false);
-	_cmdManager.SetAccelerator(_cmdContextCookie, _T("View.Preferences"), ID_VIEW_PREFERENCES, VK_OEM_COMMA, true, false, false);
 
-}
 
 void CGuideApp::OnAppAbout()
 {
@@ -1523,18 +1509,50 @@ CString CGuideApp::GetString(UINT id)
 
 BOOL CGuideApp::ProcessMessageFilter(int code, LPMSG lpMsg)
 {
-	HACCEL hAccel =  _cmdManager.GetDynamicAcceleratorTable(_cmdContextCookie);
-
-	if(hAccel && m_pMainWnd)
-	{
-		if (::TranslateAccelerator(m_pMainWnd->m_hWnd, hAccel, lpMsg)) 
-			return TRUE;
-	}
-
-	return CWinApp::ProcessMessageFilter(code, lpMsg);
+	Logger::Enter(_T("CGuideApp::ProcessMessageFilter\n"));
+	Logger::Log(*lpMsg);
+	BOOL retVal =  CWinApp::ProcessMessageFilter(code, lpMsg);
+	Logger::Exit(_T("CGuideApp::ProcessMessageFilter\n"));
+	return retVal;
 }
 
-CommandManager* CGuideApp::GetCommandManager()
+
+
+
+
+BOOL CGuideApp::PreTranslateMessage( MSG* pMsg )
 {
-	return &_cmdManager;
+	Logger::Enter(_T("CGuideApp::PreTranslateMessage\n"));
+
+	BOOL retVal = FALSE;
+
+	Logger::Log(*pMsg);
+	
+	//HACCEL hAccel =  _cmdManager.GetDynamicAcceleratorTable(_cmdContextCookie);
+
+	////Logger::Log(_T("hAccel=0x%x\n"), hAccel);
+
+	//if(hAccel && m_pMainWnd)
+	//{
+	//	if (::TranslateAccelerator(m_pMainWnd->GetSafeHwnd(), hAccel, pMsg)) 
+	//	{
+	//		TRACE(_T("Accelerator found!\n"));
+	//		retVal = TRUE;
+	//	}
+	//	else
+	//	{
+	//		CWin32Error e;
+	//		if(e.ErrorCode() != 0)
+	//		{
+	//			TRACE(_T("Error: Translate accelerator failed. %s\n"), e.Description());
+	//		}
+	//	}
+	//}
+
+	//if(retVal == FALSE)
+	//	retVal = CWinApp::PreTranslateMessage(pMsg);
+
+	Logger::Exit(_T("CGuideApp::PreTranslateMessage\n"));
+
+	return retVal;
 }

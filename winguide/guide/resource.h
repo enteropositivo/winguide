@@ -3,14 +3,12 @@
 // Used by Guide.rc
 //
 #define IDR_CNTR_INPLACE                6
-#define IDR_CNTR_INPLACE_XX             6
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define ID_TREE_DELETESELECTED          101
 #define IDP_FAILED_TO_CREATE            102
 #define ID_TREE_INSERT                  102
 #define IDR_MAINFRAME                   128
-#define IDR_MAINFRAME_XX                128
 #define IDR_GuideTYPE                   129
 #define IDC_FONTNAME                    129
 #define IDB_BOOK                        129
@@ -26,7 +24,6 @@
 #define IDI_TRAYICON                    141
 #define IDR_TRAYMENU                    142
 #define IDR_TREE_ACCEL                  143
-#define IDR_TREE_ACCEL_XX               143
 #define IDD_HELP_KEYBOARD               144
 #define IDR_NUMBER_MENU                 145
 #define IDR_LINESPACING                 146

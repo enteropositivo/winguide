@@ -21,6 +21,7 @@
 #include "PrefSheet.h"
 #include ".\mainfrm.h"
 #include "KeyConfig.h"
+#include "logger.h"
 
 //#include "Imm.h"
 
@@ -62,6 +63,7 @@ static UINT indicators[] =
 static const TCHAR barStateSection[] = _T("barState");
 
 CMainFrame::CMainFrame()
+	: _cmdContextCookie(-1)
 {
 	m_initialOVR = (::GetKeyState(VK_INSERT) & 1);
 }
@@ -156,6 +158,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	{
 		MessageBox(_T("Failed to register global hotkey (Ctrl + F11)"), _T("Error"), NULL);
 	}
+
+	_cmdContextCookie = _cmdManager->AddContext(_T("Global"));
+
+	LoadDefaultKeyBindings();
 
 	return 0;
 }
@@ -316,7 +322,7 @@ void CMainFrame::OnViewPreferences()
 
 void CMainFrame::OnViewKeyConfiguration()
 {
-	KeyConfig keyConfig;
+	KeyConfigDialog keyConfig;
 	keyConfig.DoModal();
 }
 
@@ -442,4 +448,64 @@ void CMainFrame::OnUpdateFrameTitle(BOOL bAddToTitle)
 	}
 	else
 		UpdateFrameTitleForDocument(NULL);
+}
+
+BOOL CMainFrame::PreTranslateMessage( MSG* pMsg )
+{
+	Logger::Enter(_T("CMainFrame::PreTranslateMessage\n"));
+
+	Logger::Log(*pMsg);
+
+	BOOL retVal = CFrameWnd::PreTranslateMessage(pMsg);
+
+	Logger::Exit(_T("CMainFrame::PreTranslateMessage\n"));
+
+	return retVal;
+}
+
+BOOL CMainFrame::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult)
+{
+	return FALSE;
+}
+
+void CMainFrame::LoadDefaultKeyBindings()
+{
+	//TODO: Uncomment and fix
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cancel"), ID_CANCEL_EDIT_CNTR, VK_ESCAPE, false, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, _T('C'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Copy"), ID_EDIT_COPY, VK_INSERT, true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, VK_DELETE, false, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Cut"), ID_EDIT_CUT, _T('X'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Find"), ID_EDIT_FIND, _T('F'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertDate"), ID_EDIT_INSERTDATE, _T('D'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.InsertTime"), ID_EDIT_INSERTTIME, _T('T'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, _T('V'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Paste"), ID_EDIT_PASTE, VK_INSERT, false, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.PasteAsText"), ID_EDIT_PASTEASTEXT, _T('V'), true, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Repeat"), ID_EDIT_REPEAT, VK_F3, false, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Replace"), ID_EDIT_REPLACE, _T('H'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.SelectAll"), ID_EDIT_SELECT_ALL, _T('A'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, VK_BACK, false, false, true);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.Undo"), ID_EDIT_UNDO, _T('Z'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.New"), ID_FILE_NEW, _T('N'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Open"), ID_FILE_OPEN, _T('O'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Print"), ID_FILE_PRINT, _T('P'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.PrintSubtree"), ID_FILE_PRINTSUBTREE, _T('P'), true, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("File.Save"), ID_FILE_SAVE, _T('S'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Bold"), ID_FORMAT_BOLD, _T('B'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.DecreaseIndentation"), ID_FORMAT_DECINDENT, _T('M'), true, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Hyperlink"), ID_FORMAT_HYPERLINK, _T('H'), true, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.IncreaseIndentation"), ID_FORMAT_INCINDENT, _T('M'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Italic"), ID_FORMAT_ITALIC, _T('I'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.LeftJustified"), ID_FORMAT_LEFTJUSTIFIED, _T('L'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.RightJustified"), ID_FORMAT_RIGHTJUSTIFIED, _T('R'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.StrikeThrough"), ID_FORMAT_STRIKETHROUGH, _T('K'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Format.Underline"), ID_FORMAT_UNDERLINE, _T('U'), true, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Next"), ID_NEXT_PANE, VK_F6, false, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Edit.EditProperties"), ID_OLE_EDIT_PROPERTIES, VK_RETURN, false, false, true);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Pane.Previous"), ID_PREV_PANE, VK_F6, false, true, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.RenamePage"), ID_TREE_RENAMEPAGE, VK_F2, false, false, false);
+	//_cmdManager.SetAccelerator(_cmdContextCookie, _T("Tree.Search"), ID_TREE_SEARCH, _T('F'), true, true, false);
+	_cmdManager->SetAccelerator(_cmdContextCookie, _T("View.Preferences"), ID_VIEW_PREFERENCES, VK_OEM_COMMA, true, false, false);
+
 }

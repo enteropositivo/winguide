@@ -23,16 +23,19 @@ private:
 	ChangeMap				_changeMap;
 	ContextNameToCookieMap	_cookieMap; 
 	HAccelMap		_hAccelMap;
-	CGuideApp	*_app;
+	CGuideApp		*_app;
 
 	CString			_currentScheme;
 	CStringArray	_availableSchemes;
 	AccelMap::iterator _cmdNameIter;
 	AccelMap::iterator _cmdNameIterEnd;
-public:
 
+	static CommandManager *_instance;
+	//Hide the ctor and dtor
 	CommandManager(void);
 	~CommandManager(void);
+public:
+	static CommandManager * GetInstance();
 
 	void SetCurrentScheme(const CString& scheme);
 
@@ -43,6 +46,13 @@ public:
 							, bool ctrl
 							, bool shift
 							, bool alt);
+
+	void ResetAccelerator(DWORD ctxCookie
+						, CString cmdName
+						, WORD key
+						, bool ctrl
+						, bool shift
+						, bool alt);
 
 	DWORD GetContextCookie(CString context);
 

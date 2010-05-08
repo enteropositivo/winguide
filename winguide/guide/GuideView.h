@@ -68,6 +68,7 @@ private:
 	CString GetCurPos();
 	void OnSetBgColor(COLORREF cr);
 	void OnSetFgColor(COLORREF cr);
+	BOOL PreTranslateMessage( MSG* pMsg );
 
 public:
 	virtual ~CGuideView();

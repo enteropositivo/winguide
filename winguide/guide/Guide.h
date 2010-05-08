@@ -203,9 +203,7 @@ public:
 	// -- resource strings --
 	CString GetString(UINT id);
 
-	// -- Command manager --
-	CommandManager* GetCommandManager();
-	void LoadDefaultKeyBindings();
+	
 
 private:
 	void PrefHelp_GetColor(LPCTSTR key,
@@ -224,6 +222,7 @@ private:
 	void _SetMFCPortableMode();
 	void CopyFromRegistryOrIni(bool fromRegistry);
 	BOOL ProcessMessageFilter(int code, LPMSG lpMsg);
+	BOOL PreTranslateMessage(MSG* pMsg);
 
 private:
 	HWND hLeftWnd;
@@ -238,8 +237,6 @@ private:
 	// cache of resource strings
 	CMap<UINT, UINT, CString, LPCTSTR> m_rcStrings;
 
-	CommandManager	_cmdManager;
-	DWORD			_cmdContextCookie;
 // Overrides
 public:
 	virtual BOOL InitInstance();

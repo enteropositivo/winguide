@@ -57,7 +57,6 @@
 				TreatWChar_tAsBuiltInType="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -279,6 +278,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Logger.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.cpp"
 				>
 			</File>
@@ -343,6 +346,22 @@
 				</File>
 				<File
 					RelativePath=".\StartupPref.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Interspy"
+				>
+				<File
+					RelativePath=".\Interspy\HookMgr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Interspy\InterSpy.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Interspy\ISMsgManager.cpp"
 					>
 				</File>
 			</Filter>
@@ -449,6 +468,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Logger.h"
+				>
+			</File>
+			<File
 				RelativePath=".\MainFrm.h"
 				>
 			</File>
@@ -508,6 +531,30 @@
 				RelativePath=".\Utils.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Win32Error.h"
+				>
+			</File>
+			<Filter
+				Name="Interspy"
+				>
+				<File
+					RelativePath=".\Interspy\HookMgr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Interspy\InterSpy.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Interspy\ISMsgHandlers.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Interspy\ISMsgManager.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
