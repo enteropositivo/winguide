@@ -1,2 +1,0 @@
-- Now abandoning the TranslateAccelerator API. The command manager itself 
-will generate the WM_COMMAND messages from the WM_KEYDOWN messages.
